@@ -1,10 +1,13 @@
-const CACHE_NAME = "ficha-procedimento-v4";
+const CACHE_NAME = "ficha-procedimento-v5";
 const APP_SHELL = [
   "/",
   "/static/styles.css",
   "/static/app.js",
   "/static/manifest.webmanifest",
-  "/static/assets/logo.svg"
+  "/static/assets/logo.svg",
+  "/static/assets/head-front.svg",
+  "/static/assets/head-profile-left.svg",
+  "/static/assets/head-profile-right.svg"
 ];
 
 self.addEventListener("install", (event) => {

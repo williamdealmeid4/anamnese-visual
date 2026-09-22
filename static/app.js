@@ -274,12 +274,41 @@
     { id: "right_foot_back", label: "Pé direito", view: "back", x: 172, y: 496, w: 52, h: 34 }
   ];
 
+  const HEAD_REGION_FIXTURES = [
+    { id: "left_eye", label: "Olho esquerdo", map: "head", view: "front", x: 60, y: 190, w: 62, h: 36 },
+    { id: "right_eye", label: "Olho direito", map: "head", view: "front", x: 178, y: 190, w: 62, h: 36 },
+    { id: "left_eyebrow", label: "Sobrancelha esquerda", map: "head", view: "front", x: 48, y: 162, w: 78, h: 24 },
+    { id: "right_eyebrow", label: "Sobrancelha direita", map: "head", view: "front", x: 174, y: 162, w: 78, h: 24 },
+    { id: "nose", label: "Nariz", map: "head", view: "front", x: 120, y: 238, w: 60, h: 74 },
+    { id: "left_nostril", label: "Narina esquerda", map: "head", view: "front", x: 112, y: 276, w: 30, h: 28 },
+    { id: "right_nostril", label: "Narina direita", map: "head", view: "front", x: 158, y: 276, w: 30, h: 28 },
+    { id: "septum", label: "Septo nasal", map: "head", view: "front", x: 132, y: 276, w: 36, h: 30 },
+    { id: "upper_lip", label: "Lábio superior", map: "head", view: "front", x: 104, y: 306, w: 92, h: 26 },
+    { id: "lower_lip", label: "Lábio inferior", map: "head", view: "front", x: 104, y: 329, w: 92, h: 28 },
+    { id: "mouth_center", label: "Centro da boca", map: "head", view: "front", x: 124, y: 306, w: 52, h: 51 },
+    { id: "mouth_left_corner", label: "Canto esquerdo da boca", map: "head", view: "front", x: 90, y: 315, w: 28, h: 28 },
+    { id: "mouth_right_corner", label: "Canto direito da boca", map: "head", view: "front", x: 182, y: 315, w: 28, h: 28 },
+    { id: "left_profile_eye", label: "Olho esquerdo — perfil", map: "head", view: "left", x: 62, y: 190, w: 50, h: 34 },
+    { id: "left_profile_nose", label: "Nariz — perfil esquerdo", map: "head", view: "left", x: 8, y: 224, w: 54, h: 80 },
+    { id: "left_profile_mouth", label: "Boca — perfil esquerdo", map: "head", view: "left", x: 18, y: 293, w: 72, h: 50 },
+    { id: "right_profile_eye", label: "Olho direito — perfil", map: "head", view: "right", x: 184, y: 190, w: 50, h: 34 },
+    { id: "right_profile_nose", label: "Nariz — perfil direito", map: "head", view: "right", x: 246, y: 224, w: 54, h: 80 },
+    { id: "right_profile_mouth", label: "Boca — perfil direito", map: "head", view: "right", x: 230, y: 293, w: 72, h: 50 }
+  ];
+
+  const HEAD_ASSETS = {
+    front: "/static/assets/head-front.svg",
+    left: "/static/assets/head-profile-left.svg",
+    right: "/static/assets/head-profile-right.svg"
+  };
+
   function mapRegions() {
     const configured = state.config?.bodyRegions || [];
-    const fixtureById = new Map(BODY_REGION_FIXTURES.map((region) => [region.id, region]));
+    const fixtures = [...BODY_REGION_FIXTURES, ...HEAD_REGION_FIXTURES];
+    const fixtureById = new Map(fixtures.map((region) => [region.id, region]));
     const configuredIds = new Set(configured.map((region) => region.id));
     const merged = configured.map((region) => fixtureById.has(region.id) ? { ...region, ...fixtureById.get(region.id) } : region);
-    return [...merged, ...BODY_REGION_FIXTURES.filter((region) => !configuredIds.has(region.id))];
+    return [...merged, ...fixtures.filter((region) => !configuredIds.has(region.id))];
   }
 
   function selectedRegion(region) {
@@ -319,11 +348,9 @@
 
   function headSvg() {
     const regions = mapRegions().filter((region) => regionMap(region) === "head" && region.view === state.headView);
-    const side = state.headView !== "front";
-    return `<div class="map-panel head-map-panel">${mapControls()}<svg class="head-svg" viewBox="0 0 300 360" role="img" aria-label="Mapa ampliado da cabeça ${state.headView}">
-      <ellipse class="head-silhouette" cx="150" cy="170" rx="94" ry="126" />
-      <path class="head-silhouette-detail" d="M105 92 Q150 55 195 92 M112 278 Q150 302 188 278 M150 46 L150 292" />
-      ${side ? `<path class="head-silhouette-detail" d="M185 102 Q232 134 220 189 L244 206 L218 220 M126 104 Q99 142 108 187" />` : `<path class="head-silhouette-detail" d="M90 170 Q105 188 122 170 M178 170 Q195 188 210 170 M124 222 Q150 233 176 222" />`}
+    const asset = HEAD_ASSETS[state.headView] || HEAD_ASSETS.front;
+    return `<div class="map-panel head-map-panel">${mapControls()}<svg class="head-svg" viewBox="0 0 300 424" role="img" aria-label="Mapa ampliado da cabeça ${state.headView}">
+      <image class="head-asset" href="${asset}" x="0" y="0" width="300" height="424" preserveAspectRatio="none" aria-hidden="true" />
       ${regions.map(regionMarkup).join("")}
     </svg></div>`;
   }

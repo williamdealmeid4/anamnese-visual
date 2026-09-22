@@ -369,7 +369,8 @@ body::after {
 .toast { color: #00150a; background: var(--brand-700); }
 
 .map-mode-toolbar { display: flex; justify-content: center; gap: 0.45rem; width: 100%; margin-bottom: 0.55rem; }
-.head-map-panel { min-height: 460px; }
+.head-map-panel { min-height: 560px; }
 .head-svg { width: min(100%, 330px); height: auto; overflow: visible; }
+.head-asset { pointer-events: none; }
 .selected-region span { display: grid; gap: 0.12rem; }
 .selected-region small { color: var(--ink-500); font-size: 0.72rem; }
