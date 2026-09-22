@@ -1,4 +1,4 @@
-const CACHE_NAME = "ficha-procedimento-v2";
+const CACHE_NAME = "ficha-procedimento-v3";
 const APP_SHELL = [
   "/",
   "/static/styles.css",

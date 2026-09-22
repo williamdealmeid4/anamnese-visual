@@ -120,10 +120,10 @@ BODY_REGIONS: list[dict[str, Any]] = [
     {"id": "neck", "label": "Pescoço", "view": "front", "x": 140, "y": 58, "w": 40, "h": 28},
     {"id": "chest", "label": "Peito", "view": "front", "x": 112, "y": 88, "w": 96, "h": 72},
     {"id": "abdomen", "label": "Abdômen", "view": "front", "x": 118, "y": 158, "w": 84, "h": 72},
-    {"id": "left_arm", "label": "Braço esquerdo", "view": "front", "x": 66, "y": 88, "w": 42, "h": 126},
-    {"id": "right_arm", "label": "Braço direito", "view": "front", "x": 206, "y": 88, "w": 42, "h": 126},
-    {"id": "left_hand", "label": "Mão esquerda", "view": "front", "x": 68, "y": 124, "w": 34, "h": 44},
-    {"id": "right_hand", "label": "Mão direita", "view": "front", "x": 218, "y": 124, "w": 34, "h": 44},
+    {"id": "left_arm", "label": "Braço esquerdo", "view": "front", "x": 72, "y": 88, "w": 40, "h": 114},
+    {"id": "right_arm", "label": "Braço direito", "view": "front", "x": 208, "y": 88, "w": 40, "h": 114},
+    {"id": "left_hand", "label": "Mão esquerda", "view": "front", "x": 84, "y": 201, "w": 38, "h": 45},
+    {"id": "right_hand", "label": "Mão direita", "view": "front", "x": 198, "y": 201, "w": 38, "h": 45},
     {"id": "left_thigh", "label": "Coxa esquerda", "view": "front", "x": 116, "y": 230, "w": 42, "h": 130},
     {"id": "right_thigh", "label": "Coxa direita", "view": "front", "x": 162, "y": 230, "w": 42, "h": 130},
     {"id": "left_leg", "label": "Perna esquerda", "view": "front", "x": 116, "y": 360, "w": 42, "h": 150},
@@ -134,10 +134,10 @@ BODY_REGIONS: list[dict[str, Any]] = [
     {"id": "lower_back", "label": "Lombar", "view": "back", "x": 118, "y": 178, "w": 84, "h": 60},
     {"id": "left_shoulder_back", "label": "Ombro esquerdo", "view": "back", "x": 66, "y": 88, "w": 48, "h": 78},
     {"id": "right_shoulder_back", "label": "Ombro direito", "view": "back", "x": 202, "y": 88, "w": 48, "h": 78},
-    {"id": "left_arm_back", "label": "Braço esquerdo", "view": "back", "x": 66, "y": 88, "w": 42, "h": 126},
-    {"id": "right_arm_back", "label": "Braço direito", "view": "back", "x": 206, "y": 88, "w": 42, "h": 126},
-    {"id": "left_hand_back", "label": "Mão esquerda", "view": "back", "x": 68, "y": 124, "w": 34, "h": 44},
-    {"id": "right_hand_back", "label": "Mão direita", "view": "back", "x": 218, "y": 124, "w": 34, "h": 44},
+    {"id": "left_arm_back", "label": "Braço esquerdo", "view": "back", "x": 72, "y": 88, "w": 40, "h": 114},
+    {"id": "right_arm_back", "label": "Braço direito", "view": "back", "x": 208, "y": 88, "w": 40, "h": 114},
+    {"id": "left_hand_back", "label": "Mão esquerda", "view": "back", "x": 84, "y": 201, "w": 38, "h": 45},
+    {"id": "right_hand_back", "label": "Mão direita", "view": "back", "x": 198, "y": 201, "w": 38, "h": 45},
     {"id": "left_glute", "label": "Glúteo esquerdo", "view": "back", "x": 116, "y": 238, "w": 42, "h": 76},
     {"id": "right_glute", "label": "Glúteo direito", "view": "back", "x": 162, "y": 238, "w": 42, "h": 76},
     {"id": "left_foot_back", "label": "Pé esquerdo", "view": "back", "x": 96, "y": 496, "w": 52, "h": 34},
@@ -252,6 +252,12 @@ class SessionStore:
             self.mongo.sessions.replace_one({"_id": session["_id"]}, session, upsert=True)
         else:
             self.memory[session["_id"]] = copy.deepcopy(session)
+
+    def delete(self, session_id: str) -> bool:
+        if self.mongo is not None:
+            result = self.mongo.sessions.delete_one({"_id": session_id})
+            return result.deleted_count > 0
+        return self.memory.pop(session_id, None) is not None
 
     def list(self) -> list[dict[str, Any]]:
         if self.mongo is not None:
@@ -386,6 +392,13 @@ async def create_session(payload: NewSessionPayload) -> dict[str, Any]:
 @app.get("/api/sessions/{session_id}")
 async def get_session(session_id: str, view: str = "client") -> dict[str, Any]:
     return public_session(get_session_or_404(session_id), include_audit=view == "staff")
+
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str) -> dict[str, str]:
+    if not store.delete(session_id):
+        raise HTTPException(status_code=404, detail="Sessão não encontrada")
+    return {"status": "deleted", "sessionId": session_id}
 
 
 @app.post("/api/sessions/{session_id}/draft")

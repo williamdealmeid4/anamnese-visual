@@ -124,7 +124,7 @@ h3 { margin-bottom: 0.35rem; font-size: 1.02rem; }
 .button-secondary { color: var(--brand-800); background: white; border-color: var(--line-strong); }
 .button-secondary:hover:not(:disabled) { background: #f8fafc; border-color: var(--brand-700); }
 .button-tertiary { min-height: 40px; padding-inline: 0.5rem; color: var(--brand-700); background: transparent; }
-.button-danger { color: white; background: var(--danger); }
+.button-danger { color: white; background: var(--danger); border-color: var(--danger); }
 .button-warning { color: #7a2e0b; background: var(--warning-bg); border-color: #fedf89; }
 .button:disabled { color: #98a2b3; background: #eef1f4; border-color: #e0e5eb; box-shadow: none; transform: none; }
 .button-wide { width: 100%; }
@@ -176,7 +176,7 @@ h3 { margin-bottom: 0.35rem; font-size: 1.02rem; }
 .body-svg { width: min(100%, 340px); height: auto; overflow: visible; touch-action: manipulation; }
 .body-silhouette { fill: #c8d8e7; stroke: #8ca9c2; stroke-width: 2; }
 .body-silhouette-detail { fill: none; stroke: #8ca9c2; stroke-width: 2; stroke-linecap: round; }
-.map-region rect { fill: transparent; stroke: transparent; stroke-width: 3; rx: 12; cursor: pointer; transition: fill 140ms ease, stroke 140ms ease; }
+.map-region rect { fill: transparent; stroke: transparent; stroke-width: 3; rx: 12; cursor: pointer; pointer-events: all; transition: fill 140ms ease, stroke 140ms ease; }
 .map-region:hover rect, .map-region:focus rect { fill: rgba(37, 99, 235, 0.11); stroke: rgba(37, 99, 235, 0.45); }
 .map-region.selected rect { fill: rgba(180, 35, 24, 0.18); stroke: var(--danger); }
 .map-region text { pointer-events: none; fill: var(--brand-900); font-size: 8px; font-weight: 800; text-anchor: middle; opacity: 0; }
@@ -221,6 +221,8 @@ h3 { margin-bottom: 0.35rem; font-size: 1.02rem; }
 .session-row:hover { border-color: #a9bfd4; box-shadow: var(--shadow-md); }
 .session-name { margin: 0 0 0.25rem; font-weight: 800; }
 .session-meta { color: var(--ink-500); font-size: 0.8rem; }
+.session-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
+.session-actions .button { min-height: 40px; padding-inline: 0.75rem; }
 .detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 1rem; align-items: start; }
 .detail-section + .detail-section { margin-top: 1rem; }

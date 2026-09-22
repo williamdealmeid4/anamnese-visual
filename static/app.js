@@ -80,7 +80,7 @@
   }
 
   function answerLabel(value) {
-    return { yes: "Sim", no: "Não", unknown: "Não sei", prefer: "Prefiro informar" }[value] || "Não respondido";
+    return { yes: "Sim", no: "Não", unknown: "Não sei" }[value] || "Não respondido";
   }
 
   function logoMarkup() {
@@ -239,14 +239,14 @@
   }
 
   function choiceMarkup(question, current) {
-    const options = [["yes", "Sim"], ["no", "Não"], ["unknown", "Não sei"], ["prefer", "Prefiro informar"]];
+    const options = [["yes", "Sim"], ["no", "Não"], ["unknown", "Não sei"]];
     return `<div class="choice-grid" role="radiogroup" aria-label="${escapeHtml(question.label)}">${options.map(([value, label]) => `<button type="button" class="choice ${value === current ? "selected" : ""} ${value === "yes" ? "positive" : ""}" data-action="answer" data-code="${question.code}" data-value="${value}" aria-pressed="${value === current}">${label}</button>`).join("")}</div>`;
   }
 
   function renderHealth() {
     return `<section>${state.config.questions.map((question) => {
       const current = state.form.answers[question.code];
-      const followup = current === "yes" || current === "prefer";
+      const followup = current === "yes";
       return `<article class="card">
         <div class="card-header"><div><h2 class="card-title">${escapeHtml(question.label)}</h2><p class="card-helper">${escapeHtml(question.helper)}</p></div>${question.required ? '<span class="status-badge draft">Obrigatório</span>' : ''}</div>
         ${choiceMarkup(question, current)}
@@ -280,12 +280,14 @@
     const regions = (state.config.bodyRegions || []).filter((region) => regionMap(region) === "body" && region.view === state.bodyView);
     return `<div class="map-panel">${mapControls()}<svg class="body-svg" viewBox="0 0 320 540" role="img" aria-label="Mapa corporal ${state.bodyView === "front" ? "frontal" : "traseiro"}">
       <circle class="body-silhouette" cx="160" cy="38" r="26" />
-      <path class="body-silhouette" d="M137 65 C124 72 111 80 101 91 L76 104 L88 130 L112 119 L112 225 L122 236 L116 355 L111 509 L141 509 L160 361 L179 509 L209 509 L204 355 L198 236 L208 225 L208 119 L232 130 L244 104 L219 91 C209 80 196 72 183 65Z" />
-      <path class="body-silhouette" d="M88 126 C78 126 71 132 72 142 C73 152 80 160 90 164 L99 151 L96 133Z" />
-      <path class="body-silhouette" d="M232 126 C242 126 249 132 248 142 C247 152 240 160 230 164 L221 151 L224 133Z" />
+      <path class="body-silhouette" d="M137 65 L137 86 L112 96 L112 225 L122 236 L116 355 L111 507 L141 507 L160 361 L179 507 L209 507 L204 355 L198 236 L208 225 L208 96 L183 86 L183 65Z" />
+      <path class="body-silhouette" d="M137 69 C125 72 115 81 104 92 L76 106 C72 108 72 114 75 120 L83 136 C85 140 90 141 94 138 L111 128 L116 196 C117 204 113 211 107 217 L120 226 C128 217 132 207 132 196 L132 91 C134 82 138 76 137 69Z" />
+      <path class="body-silhouette" d="M183 69 C195 72 205 81 216 92 L244 106 C248 108 248 114 245 120 L237 136 C235 140 230 141 226 138 L209 128 L204 196 C203 204 207 211 213 217 L200 226 C192 217 188 207 188 196 L188 91 C186 82 182 76 183 69Z" />
+      <path class="body-silhouette" d="M107 211 C98 210 91 216 91 226 C91 237 99 246 110 249 L124 232 L116 215Z" />
+      <path class="body-silhouette" d="M213 211 C222 210 229 216 229 226 C229 237 221 246 210 249 L196 232 L204 215Z" />
       <path class="body-silhouette" d="M111 507 L98 516 C91 521 94 529 104 531 L145 531 L141 507Z" />
       <path class="body-silhouette" d="M209 507 L222 516 C229 521 226 529 216 531 L175 531 L179 507Z" />
-      <path class="body-silhouette-detail" d="M160 66 L160 225 M112 119 L76 104 M208 119 L244 104" />
+      <path class="body-silhouette-detail" d="M160 66 L160 225 M112 96 L112 225 M208 96 L208 225 M116 355 L141 507 M204 355 L179 507" />
       ${regions.map(regionMarkup).join("")}
     </svg></div>`;
   }
@@ -361,7 +363,7 @@
 
   function renderSessionRow(session) {
     const alert = session.alert;
-    return `<article class="session-row"><div><p class="session-name">${escapeHtml(session.client?.name || "Cliente sem nome")}</p><span class="session-meta">${escapeHtml(session.client?.service || "Procedimento")} · atualizada ${formatDate(session.updatedAt)}</span></div><div><span class="status-badge ${session.status}">${statusLabel(session.status)}</span></div><div><span class="status-badge ${alert ? alert.level : "clear"}">${alert ? "Alerta ativo" : "Sem alertas"}</span></div><button class="button button-secondary" data-action="staff-select" data-session="${session._id}">Abrir</button></article>`;
+    return `<article class="session-row"><div><p class="session-name">${escapeHtml(session.client?.name || "Cliente sem nome")}</p><span class="session-meta">${escapeHtml(session.client?.service || "Procedimento")} · atualizada ${formatDate(session.updatedAt)}</span></div><div><span class="status-badge ${session.status}">${statusLabel(session.status)}</span></div><div><span class="status-badge ${alert ? alert.level : "clear"}">${alert ? "Alerta ativo" : "Sem alertas"}</span></div><div class="session-actions"><button class="button button-secondary" data-action="staff-select" data-session="${session._id}">Abrir</button><button class="button button-danger" data-action="staff-delete" data-session="${session._id}">Excluir</button></div></article>`;
   }
 
   function renderStaffAlert(session) {
@@ -568,6 +570,24 @@
     }
   }
 
+  async function deleteSession(sessionId) {
+    const session = state.staffSessions.find((item) => item._id === sessionId);
+    const clientName = session?.client?.name || "esta ficha";
+    if (!window.confirm(`Excluir ${clientName}? Esta ação não pode ser desfeita.`)) return;
+    try {
+      await api(`/api/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
+      state.staffSessions = state.staffSessions.filter((item) => item._id !== sessionId);
+      if (state.selectedSessionId === sessionId) {
+        state.selectedSessionId = null;
+        state.staffDetail = null;
+      }
+      showToast("Ficha excluída.");
+      render();
+    } catch (error) {
+      showToast(error.message);
+    }
+  }
+
   async function alertAction(action) {
     let note = "";
     if (action !== "acknowledge") {
@@ -631,6 +651,7 @@
     if (action === "back-staff") { state.selectedSessionId = null; state.staffDetail = null; render(); return; }
     if (action === "reload-staff") { await refreshStaff(); return; }
     if (action === "new-session") { await createSession(); return; }
+    if (action === "staff-delete") { await deleteSession(target.dataset.session); return; }
     if (action === "alert-action") { await alertAction(target.dataset.alertAction); return; }
   });
 
