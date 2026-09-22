@@ -394,11 +394,20 @@ async def get_session(session_id: str, view: str = "client") -> dict[str, Any]:
     return public_session(get_session_or_404(session_id), include_audit=view == "staff")
 
 
-@app.delete("/api/sessions/{session_id}")
-async def delete_session(session_id: str) -> dict[str, str]:
+def remove_session(session_id: str) -> dict[str, str]:
     if not store.delete(session_id):
         raise HTTPException(status_code=404, detail="Sessão não encontrada")
     return {"status": "deleted", "sessionId": session_id}
+
+
+@app.delete("/api/sessions/{session_id}")
+async def delete_session(session_id: str) -> dict[str, str]:
+    return remove_session(session_id)
+
+
+@app.post("/api/sessions/{session_id}/delete")
+async def delete_session_action(session_id: str) -> dict[str, str]:
+    return remove_session(session_id)
 
 
 @app.post("/api/sessions/{session_id}/draft")

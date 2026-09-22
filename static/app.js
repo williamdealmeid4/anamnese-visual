@@ -259,13 +259,36 @@
     return region.map || "body";
   }
 
+  const BODY_REGION_FIXTURES = [
+    { id: "left_arm", label: "Braço esquerdo", view: "front", x: 72, y: 88, w: 40, h: 114 },
+    { id: "right_arm", label: "Braço direito", view: "front", x: 208, y: 88, w: 40, h: 114 },
+    { id: "left_hand", label: "Mão esquerda", view: "front", x: 84, y: 201, w: 38, h: 45 },
+    { id: "right_hand", label: "Mão direita", view: "front", x: 198, y: 201, w: 38, h: 45 },
+    { id: "left_foot", label: "Pé esquerdo", view: "front", x: 96, y: 496, w: 52, h: 34 },
+    { id: "right_foot", label: "Pé direito", view: "front", x: 172, y: 496, w: 52, h: 34 },
+    { id: "left_arm_back", label: "Braço esquerdo", view: "back", x: 72, y: 88, w: 40, h: 114 },
+    { id: "right_arm_back", label: "Braço direito", view: "back", x: 208, y: 88, w: 40, h: 114 },
+    { id: "left_hand_back", label: "Mão esquerda", view: "back", x: 84, y: 201, w: 38, h: 45 },
+    { id: "right_hand_back", label: "Mão direita", view: "back", x: 198, y: 201, w: 38, h: 45 },
+    { id: "left_foot_back", label: "Pé esquerdo", view: "back", x: 96, y: 496, w: 52, h: 34 },
+    { id: "right_foot_back", label: "Pé direito", view: "back", x: 172, y: 496, w: 52, h: 34 }
+  ];
+
+  function mapRegions() {
+    const configured = state.config?.bodyRegions || [];
+    const fixtureById = new Map(BODY_REGION_FIXTURES.map((region) => [region.id, region]));
+    const configuredIds = new Set(configured.map((region) => region.id));
+    const merged = configured.map((region) => fixtureById.has(region.id) ? { ...region, ...fixtureById.get(region.id) } : region);
+    return [...merged, ...BODY_REGION_FIXTURES.filter((region) => !configuredIds.has(region.id))];
+  }
+
   function selectedRegion(region) {
     return state.form.bodyMap.some((item) => item.regionId === region.id && (item.map || "body") === regionMap(region));
   }
 
   function regionMarkup(region) {
     const selected = selectedRegion(region);
-    return `<g class="map-region ${selected ? "selected" : ""}" data-action="map-region" data-region="${region.id}" role="button" tabindex="0" aria-label="${escapeHtml(region.label)}" aria-pressed="${selected}"><rect x="${region.x}" y="${region.y}" width="${region.w}" height="${region.h}" /><text x="${region.x + region.w / 2}" y="${region.y + region.h / 2}">${escapeHtml(region.label.split(" ").slice(0, 2).join(" "))}</text></g>`;
+    return `<g class="map-region ${selected ? "selected" : ""}" data-action="map-region" data-region="${region.id}" role="button" tabindex="0" aria-label="${escapeHtml(region.label)}" aria-pressed="${selected}"><rect x="${region.x}" y="${region.y}" width="${region.w}" height="${region.h}" pointer-events="all" /><text x="${region.x + region.w / 2}" y="${region.y + region.h / 2}">${escapeHtml(region.label.split(" ").slice(0, 2).join(" "))}</text></g>`;
   }
 
   function mapControls() {
@@ -277,23 +300,25 @@
   }
 
   function bodySvg() {
-    const regions = (state.config.bodyRegions || []).filter((region) => regionMap(region) === "body" && region.view === state.bodyView);
+    const regions = mapRegions().filter((region) => regionMap(region) === "body" && region.view === state.bodyView);
     return `<div class="map-panel">${mapControls()}<svg class="body-svg" viewBox="0 0 320 540" role="img" aria-label="Mapa corporal ${state.bodyView === "front" ? "frontal" : "traseiro"}">
       <circle class="body-silhouette" cx="160" cy="38" r="26" />
       <path class="body-silhouette" d="M137 65 L137 86 L112 96 L112 225 L122 236 L116 355 L111 507 L141 507 L160 361 L179 507 L209 507 L204 355 L198 236 L208 225 L208 96 L183 86 L183 65Z" />
-      <path class="body-silhouette" d="M137 69 C125 72 115 81 104 92 L76 106 C72 108 72 114 75 120 L83 136 C85 140 90 141 94 138 L111 128 L116 196 C117 204 113 211 107 217 L120 226 C128 217 132 207 132 196 L132 91 C134 82 138 76 137 69Z" />
-      <path class="body-silhouette" d="M183 69 C195 72 205 81 216 92 L244 106 C248 108 248 114 245 120 L237 136 C235 140 230 141 226 138 L209 128 L204 196 C203 204 207 211 213 217 L200 226 C192 217 188 207 188 196 L188 91 C186 82 182 76 183 69Z" />
+      <path class="body-silhouette" d="M136 78 C124 80 113 87 103 98 L78 128 L94 143 L119 121 L136 106Z" />
+      <path class="body-silhouette" d="M184 78 C196 80 207 87 217 98 L242 128 L226 143 L201 121 L184 106Z" />
+      <path class="body-silhouette" d="M94 143 L90 184 C89 195 96 204 107 206 L118 208 L122 176 L119 121Z" />
+      <path class="body-silhouette" d="M226 143 L230 184 C231 195 224 204 213 206 L202 208 L198 176 L201 121Z" />
       <path class="body-silhouette" d="M107 211 C98 210 91 216 91 226 C91 237 99 246 110 249 L124 232 L116 215Z" />
       <path class="body-silhouette" d="M213 211 C222 210 229 216 229 226 C229 237 221 246 210 249 L196 232 L204 215Z" />
       <path class="body-silhouette" d="M111 507 L98 516 C91 521 94 529 104 531 L145 531 L141 507Z" />
       <path class="body-silhouette" d="M209 507 L222 516 C229 521 226 529 216 531 L175 531 L179 507Z" />
-      <path class="body-silhouette-detail" d="M160 66 L160 225 M112 96 L112 225 M208 96 L208 225 M116 355 L141 507 M204 355 L179 507" />
+      <path class="body-silhouette-detail" d="M160 66 L160 225 M112 96 L112 225 M208 96 L208 225 M116 355 L141 507 M204 355 L179 507 M119 121 L94 143 M201 121 L226 143" />
       ${regions.map(regionMarkup).join("")}
     </svg></div>`;
   }
 
   function headSvg() {
-    const regions = (state.config.bodyRegions || []).filter((region) => regionMap(region) === "head" && region.view === state.headView);
+    const regions = mapRegions().filter((region) => regionMap(region) === "head" && region.view === state.headView);
     const side = state.headView !== "front";
     return `<div class="map-panel head-map-panel">${mapControls()}<svg class="head-svg" viewBox="0 0 300 360" role="img" aria-label="Mapa ampliado da cabeça ${state.headView}">
       <ellipse class="head-silhouette" cx="150" cy="170" rx="94" ry="126" />
@@ -575,7 +600,7 @@
     const clientName = session?.client?.name || "esta ficha";
     if (!window.confirm(`Excluir ${clientName}? Esta ação não pode ser desfeita.`)) return;
     try {
-      await api(`/api/sessions/${encodeURIComponent(sessionId)}`, { method: "DELETE" });
+      await api(`/api/sessions/${encodeURIComponent(sessionId)}/delete`, { method: "POST" });
       state.staffSessions = state.staffSessions.filter((item) => item._id !== sessionId);
       if (state.selectedSessionId === sessionId) {
         state.selectedSessionId = null;
@@ -633,7 +658,7 @@
     if (action === "map-mode") { state.mapMode = target.dataset.mode; render(); return; }
     if (action === "map-view") { if (state.mapMode === "head") state.headView = target.dataset.view; else state.bodyView = target.dataset.view; render(); return; }
     if (action === "map-region") {
-      const region = state.config.bodyRegions.find((item) => item.id === target.dataset.region);
+      const region = mapRegions().find((item) => item.id === target.dataset.region);
       if (!region) return;
       const index = state.form.bodyMap.findIndex((item) => item.regionId === region.id && (item.map || "body") === regionMap(region));
       if (index >= 0) state.form.bodyMap.splice(index, 1);
