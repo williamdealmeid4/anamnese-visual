@@ -25,7 +25,9 @@
     started: false,
     submitted: false,
     step: 0,
+    mapMode: "body",
     bodyView: "front",
+    headView: "front",
     loading: true,
     saving: false,
     error: "",
@@ -246,23 +248,55 @@
     }).join("")}</section>`;
   }
 
+  function regionMap(region) {
+    return region.map || "body";
+  }
+
+  function selectedRegion(region) {
+    return state.form.bodyMap.some((item) => item.regionId === region.id && (item.map || "body") === regionMap(region));
+  }
+
+  function regionMarkup(region) {
+    const selected = selectedRegion(region);
+    return `<g class="map-region ${selected ? "selected" : ""}" data-action="map-region" data-region="${region.id}" role="button" tabindex="0" aria-label="${escapeHtml(region.label)}" aria-pressed="${selected}"><rect x="${region.x}" y="${region.y}" width="${region.w}" height="${region.h}" /><text x="${region.x + region.w / 2}" y="${region.y + region.h / 2}">${escapeHtml(region.label.split(" ").slice(0, 2).join(" "))}</text></g>`;
+  }
+
+  function mapControls() {
+    const views = state.mapMode === "head"
+      ? [["front", "Frontal"], ["left", "Perfil esquerdo"], ["right", "Perfil direito"]]
+      : [["front", "Frente"], ["back", "Costas"]];
+    const activeView = state.mapMode === "head" ? state.headView : state.bodyView;
+    return `<div class="map-mode-toolbar"><button class="map-toggle ${state.mapMode === "body" ? "active" : ""}" data-action="map-mode" data-mode="body">Corpo</button><button class="map-toggle ${state.mapMode === "head" ? "active" : ""}" data-action="map-mode" data-mode="head">Cabeça</button></div><div class="map-toolbar">${views.map(([view, label]) => `<button class="map-toggle ${activeView === view ? "active" : ""}" data-action="map-view" data-view="${view}">${label}</button>`).join("")}</div>`;
+  }
+
   function bodySvg() {
-    const regions = (state.config.bodyRegions || []).filter((region) => region.view === state.bodyView);
-    const selected = (id) => state.form.bodyMap.some((item) => item.regionId === id);
-    return `<div class="map-panel">
-      <div class="map-toolbar"><button class="map-toggle ${state.bodyView === "front" ? "active" : ""}" data-action="body-view" data-view="front">Frente</button><button class="map-toggle ${state.bodyView === "back" ? "active" : ""}" data-action="body-view" data-view="back">Costas</button></div>
-      <svg class="body-svg" viewBox="0 0 320 540" role="img" aria-label="Mapa corporal ${state.bodyView === "front" ? "frontal" : "traseiro"}">
-        <circle class="body-silhouette" cx="160" cy="38" r="26" />
-        <path class="body-silhouette" d="M137 65 C124 72 111 80 101 91 L76 104 L88 130 L112 119 L112 225 L122 236 L116 355 L111 509 L141 509 L160 361 L179 509 L209 509 L204 355 L198 236 L208 225 L208 119 L232 130 L244 104 L219 91 C209 80 196 72 183 65Z" />
-        <path class="body-silhouette-detail" d="M160 66 L160 225 M112 119 L76 104 M208 119 L244 104" />
-        ${regions.map((region) => `<g class="map-region ${selected(region.id) ? "selected" : ""}" data-action="map-region" data-region="${region.id}" role="button" tabindex="0" aria-label="${escapeHtml(region.label)}" aria-pressed="${selected(region.id)}"><rect x="${region.x}" y="${region.y}" width="${region.w}" height="${region.h}" /><text x="${region.x + region.w / 2}" y="${region.y + region.h / 2}">${escapeHtml(region.label.split(" ").slice(0, 2).join(" "))}</text></g>`).join("")}
-      </svg>
-    </div>`;
+    const regions = (state.config.bodyRegions || []).filter((region) => regionMap(region) === "body" && region.view === state.bodyView);
+    return `<div class="map-panel">${mapControls()}<svg class="body-svg" viewBox="0 0 320 540" role="img" aria-label="Mapa corporal ${state.bodyView === "front" ? "frontal" : "traseiro"}">
+      <circle class="body-silhouette" cx="160" cy="38" r="26" />
+      <path class="body-silhouette" d="M137 65 C124 72 111 80 101 91 L76 104 L88 130 L112 119 L112 225 L122 236 L116 355 L111 509 L141 509 L160 361 L179 509 L209 509 L204 355 L198 236 L208 225 L208 119 L232 130 L244 104 L219 91 C209 80 196 72 183 65Z" />
+      <path class="body-silhouette-detail" d="M160 66 L160 225 M112 119 L76 104 M208 119 L244 104" />
+      ${regions.map(regionMarkup).join("")}
+    </svg></div>`;
+  }
+
+  function headSvg() {
+    const regions = (state.config.bodyRegions || []).filter((region) => regionMap(region) === "head" && region.view === state.headView);
+    const side = state.headView !== "front";
+    return `<div class="map-panel head-map-panel">${mapControls()}<svg class="head-svg" viewBox="0 0 300 360" role="img" aria-label="Mapa ampliado da cabeça ${state.headView}">
+      <ellipse class="head-silhouette" cx="150" cy="170" rx="94" ry="126" />
+      <path class="head-silhouette-detail" d="M105 92 Q150 55 195 92 M112 278 Q150 302 188 278 M150 46 L150 292" />
+      ${side ? `<path class="head-silhouette-detail" d="M185 102 Q232 134 220 189 L244 206 L218 220 M126 104 Q99 142 108 187" />` : `<path class="head-silhouette-detail" d="M90 170 Q105 188 122 170 M178 170 Q195 188 210 170 M124 222 Q150 233 176 222" />`}
+      ${regions.map(regionMarkup).join("")}
+    </svg></div>`;
+  }
+
+  function mapCanvas() {
+    return state.mapMode === "head" ? headSvg() : bodySvg();
   }
 
   function renderBodyMap() {
     const selected = state.form.bodyMap.map((item) => item.label);
-    return `<section class="card"><div class="body-map-layout"><div><p class="muted small" style="margin-bottom:0.8rem">Você pode selecionar mais de uma região.</p>${bodySvg()}</div><div><div class="card surface-muted"><div class="card-header"><div><h2 class="card-title">Regiões selecionadas</h2><p class="card-helper">Marque o local mais próximo possível.</p></div></div><div class="selected-list">${selected.length ? state.form.bodyMap.map((item) => `<div class="selected-region"><span>${escapeHtml(item.label)}</span><button type="button" data-action="remove-region" data-region="${item.regionId}" aria-label="Remover ${escapeHtml(item.label)}">×</button></div>`).join("") : '<p class="muted small">Nenhuma região selecionada.</p>'}</div></div></div></div></section>`;
+    return `<section class="card"><div class="body-map-layout"><div><p class="muted small" style="margin-bottom:0.8rem">Você pode selecionar mais de uma região. Use “Cabeça” para detalhar olhos, nariz e boca.</p>${mapCanvas()}</div><div><div class="card surface-muted"><div class="card-header"><div><h2 class="card-title">Regiões selecionadas</h2><p class="card-helper">Marque o local mais próximo possível.</p></div></div><div class="selected-list">${selected.length ? state.form.bodyMap.map((item) => `<div class="selected-region"><span><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml((item.map || "body") === "head" ? "Cabeça" : item.view === "back" ? "Costas" : item.view === "left" ? "Perfil esquerdo" : item.view === "right" ? "Perfil direito" : "Frente")}</small></span><button type="button" data-action="remove-region" data-region="${item.regionId}" aria-label="Remover ${escapeHtml(item.label)}">×</button></div>`).join("") : '<p class="muted small">Nenhuma região selecionada.</p>'}</div></div></div></div></section>`;
   }
 
   function renderPhotoPreview(photo, index) {
@@ -328,7 +362,7 @@
   function renderStaffDetail() {
     const session = state.staffDetail;
     const questions = state.config.questions;
-    return `${topbar()}<main class="main-content"><div class="staff-width"><div class="detail-header"><div><button class="button button-tertiary" data-action="back-staff">← Voltar para sessões</button><p class="eyebrow" style="margin-top:0.9rem">Ficha da sessão</p><h1>${escapeHtml(session.client?.name || "Cliente sem nome")}</h1><p class="lead">${escapeHtml(session.client?.service || "Procedimento")} · atualizada ${formatDate(session.updatedAt)}</p></div><span class="status-badge ${session.status}">${statusLabel(session.status)}</span></div>${renderStaffAlert(session)}<div class="detail-grid" style="margin-top:1rem"><div><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Cards de Saúde</h2><p class="card-helper">Respostas registradas pelo cliente.</p></div></div><div class="answer-grid">${questions.map((question) => `<div class="answer-item"><div class="answer-question">${escapeHtml(question.label)}</div><div class="answer-value">${answerLabel(session.answers?.[question.code])}</div>${session.answers?.[`${question.code}_detail`] ? `<div class="muted small" style="margin-top:0.25rem">${escapeHtml(session.answers[`${question.code}_detail`])}</div>` : ""}</div>`).join("")}</div></section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Mapa corporal</h2><p class="card-helper">Regiões indicadas pelo cliente.</p></div></div><div class="selected-list">${session.bodyMap?.length ? session.bodyMap.map((item) => `<div class="selected-region"><span>${escapeHtml(item.label)}</span><span class="muted small">${escapeHtml(item.view === "back" ? "Costas" : "Frente")}</span></div>`).join("") : '<p class="muted small">Nenhuma região informada.</p>'}</div></section></div><div><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Fotos</h2><p class="card-helper">Condições pré-existentes e documento.</p></div></div><div class="media-strip">${(session.skinPhotos || []).map((photo) => `<img src="${photo.dataUrl}" alt="Foto da pele" />`).join("")}${session.document?.dataUrl ? `<img src="${session.document.dataUrl}" alt="Documento do cliente" />` : ""}</div>${!session.skinPhotos?.length && !session.document ? '<p class="muted small">Nenhuma foto disponível.</p>' : ""}</section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Consentimento</h2></div><span class="status-badge ${session.consentStatus === "valid" ? "ready" : "draft"}">${statusLabel(session.consentStatus)}</span></div><div class="summary-list">${summaryRow("Termo", session.termsAccepted ? session.termsVersion || "v1.0" : "Não aceito")}${summaryRow("Assinatura", session.signature ? "Preenchida" : "Ausente")}${summaryRow("Enviada em", formatDate(session.submittedAt))}</div>${session.signature ? `<div style="margin-top:1rem;padding:0.5rem;border:1px solid var(--line);border-radius:9px;background:white"><img src="${session.signature}" alt="Assinatura do cliente" style="display:block;width:100%;height:120px;object-fit:contain" /></div>` : ""}</section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Auditoria</h2></div></div><div class="audit-list">${(session.audit || []).length ? session.audit.map((item) => `<div class="audit-item"><div class="audit-action">${escapeHtml(item.action)}</div><div class="audit-detail">${escapeHtml(item.detail)}</div><div class="audit-time">${formatDate(item.at)}</div></div>`).join("") : '<p class="muted small">Nenhum evento registrado.</p>'}</div></section></div></div></div></main>`;
+    return `${topbar()}<main class="main-content"><div class="staff-width"><div class="detail-header"><div><button class="button button-tertiary" data-action="back-staff">← Voltar para sessões</button><p class="eyebrow" style="margin-top:0.9rem">Ficha da sessão</p><h1>${escapeHtml(session.client?.name || "Cliente sem nome")}</h1><p class="lead">${escapeHtml(session.client?.service || "Procedimento")} · atualizada ${formatDate(session.updatedAt)}</p></div><span class="status-badge ${session.status}">${statusLabel(session.status)}</span></div>${renderStaffAlert(session)}<div class="detail-grid" style="margin-top:1rem"><div><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Cards de Saúde</h2><p class="card-helper">Respostas registradas pelo cliente.</p></div></div><div class="answer-grid">${questions.map((question) => `<div class="answer-item"><div class="answer-question">${escapeHtml(question.label)}</div><div class="answer-value">${answerLabel(session.answers?.[question.code])}</div>${session.answers?.[`${question.code}_detail`] ? `<div class="muted small" style="margin-top:0.25rem">${escapeHtml(session.answers[`${question.code}_detail`])}</div>` : ""}</div>`).join("")}</div></section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Mapa corporal</h2><p class="card-helper">Regiões indicadas pelo cliente.</p></div></div><div class="selected-list">${session.bodyMap?.length ? session.bodyMap.map((item) => `<div class="selected-region"><span>${escapeHtml(item.label)}</span><span class="muted small">${escapeHtml((item.map || "body") === "head" ? `Cabeça · ${item.view === "left" ? "Perfil esquerdo" : item.view === "right" ? "Perfil direito" : "Frontal"}` : item.view === "back" ? "Corpo · Costas" : "Corpo · Frente")}</span></div>`).join("") : '<p class="muted small">Nenhuma região informada.</p>'}</div></section></div><div><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Fotos</h2><p class="card-helper">Condições pré-existentes e documento.</p></div></div><div class="media-strip">${(session.skinPhotos || []).map((photo) => `<img src="${photo.dataUrl}" alt="Foto da pele" />`).join("")}${session.document?.dataUrl ? `<img src="${session.document.dataUrl}" alt="Documento do cliente" />` : ""}</div>${!session.skinPhotos?.length && !session.document ? '<p class="muted small">Nenhuma foto disponível.</p>' : ""}</section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Consentimento</h2></div><span class="status-badge ${session.consentStatus === "valid" ? "ready" : "draft"}">${statusLabel(session.consentStatus)}</span></div><div class="summary-list">${summaryRow("Termo", session.termsAccepted ? session.termsVersion || "v1.0" : "Não aceito")}${summaryRow("Assinatura", session.signature ? "Preenchida" : "Ausente")}${summaryRow("Enviada em", formatDate(session.submittedAt))}</div>${session.signature ? `<div style="margin-top:1rem;padding:0.5rem;border:1px solid var(--line);border-radius:9px;background:white"><img src="${session.signature}" alt="Assinatura do cliente" style="display:block;width:100%;height:120px;object-fit:contain" /></div>` : ""}</section><section class="card detail-section"><div class="card-header"><div><h2 class="card-title">Auditoria</h2></div></div><div class="audit-list">${(session.audit || []).length ? session.audit.map((item) => `<div class="audit-item"><div class="audit-action">${escapeHtml(item.action)}</div><div class="audit-detail">${escapeHtml(item.detail)}</div><div class="audit-time">${formatDate(item.at)}</div></div>`).join("") : '<p class="muted small">Nenhum evento registrado.</p>'}</div></section></div></div></div></main>`;
   }
 
   async function saveDraft() {
@@ -565,13 +599,14 @@
     if (action === "next") { await nextStep(); return; }
     if (action === "back") { state.error = ""; state.step = Math.max(0, state.step - 1); render(); return; }
     if (action === "answer") { state.form.answers[target.dataset.code] = target.dataset.value; state.error = ""; render(); return; }
-    if (action === "body-view") { state.bodyView = target.dataset.view; render(); return; }
+    if (action === "map-mode") { state.mapMode = target.dataset.mode; render(); return; }
+    if (action === "map-view") { if (state.mapMode === "head") state.headView = target.dataset.view; else state.bodyView = target.dataset.view; render(); return; }
     if (action === "map-region") {
       const region = state.config.bodyRegions.find((item) => item.id === target.dataset.region);
       if (!region) return;
-      const index = state.form.bodyMap.findIndex((item) => item.regionId === region.id);
+      const index = state.form.bodyMap.findIndex((item) => item.regionId === region.id && (item.map || "body") === regionMap(region));
       if (index >= 0) state.form.bodyMap.splice(index, 1);
-      else state.form.bodyMap.push({ regionId: region.id, label: region.label, view: region.view, point: { x: 0.5, y: 0.5 } });
+      else state.form.bodyMap.push({ regionId: region.id, label: region.label, map: regionMap(region), view: region.view, point: { x: 0.5, y: 0.5 } });
       state.error = "";
       render();
       return;

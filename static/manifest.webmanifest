@@ -5,7 +5,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f8fb",
-  "theme_color": "#1e3a5f",
+  "theme_color": "#050705",
   "lang": "pt-BR",
   "icons": [
     {
@@ -16,4 +16,3 @@
     }
   ]
 }
-

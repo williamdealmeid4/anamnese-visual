@@ -134,6 +134,28 @@ BODY_REGIONS: list[dict[str, Any]] = [
     {"id": "right_glute", "label": "Glúteo direito", "view": "back", "x": 162, "y": 238, "w": 42, "h": 76},
 ]
 
+HEAD_REGIONS: list[dict[str, Any]] = [
+    {"id": "left_eye", "label": "Olho esquerdo", "map": "head", "view": "front", "x": 88, "y": 124, "w": 46, "h": 28},
+    {"id": "right_eye", "label": "Olho direito", "map": "head", "view": "front", "x": 166, "y": 124, "w": 46, "h": 28},
+    {"id": "left_eyebrow", "label": "Sobrancelha esquerda", "map": "head", "view": "front", "x": 86, "y": 103, "w": 50, "h": 15},
+    {"id": "right_eyebrow", "label": "Sobrancelha direita", "map": "head", "view": "front", "x": 164, "y": 103, "w": 50, "h": 15},
+    {"id": "nose", "label": "Nariz", "map": "head", "view": "front", "x": 132, "y": 148, "w": 36, "h": 62},
+    {"id": "left_nostril", "label": "Narina esquerda", "map": "head", "view": "front", "x": 124, "y": 190, "w": 22, "h": 20},
+    {"id": "right_nostril", "label": "Narina direita", "map": "head", "view": "front", "x": 154, "y": 190, "w": 22, "h": 20},
+    {"id": "septum", "label": "Septo nasal", "map": "head", "view": "front", "x": 137, "y": 193, "w": 26, "h": 22},
+    {"id": "upper_lip", "label": "Lábio superior", "map": "head", "view": "front", "x": 116, "y": 224, "w": 68, "h": 20},
+    {"id": "lower_lip", "label": "Lábio inferior", "map": "head", "view": "front", "x": 116, "y": 244, "w": 68, "h": 22},
+    {"id": "mouth_center", "label": "Centro da boca", "map": "head", "view": "front", "x": 134, "y": 224, "w": 32, "h": 42},
+    {"id": "mouth_left_corner", "label": "Canto esquerdo da boca", "map": "head", "view": "front", "x": 106, "y": 230, "w": 20, "h": 22},
+    {"id": "mouth_right_corner", "label": "Canto direito da boca", "map": "head", "view": "front", "x": 174, "y": 230, "w": 20, "h": 22},
+    {"id": "left_profile_eye", "label": "Olho esquerdo — perfil", "map": "head", "view": "left", "x": 112, "y": 126, "w": 44, "h": 28},
+    {"id": "left_profile_nose", "label": "Nariz — perfil esquerdo", "map": "head", "view": "left", "x": 170, "y": 150, "w": 58, "h": 62},
+    {"id": "left_profile_mouth", "label": "Boca — perfil esquerdo", "map": "head", "view": "left", "x": 165, "y": 220, "w": 60, "h": 42},
+    {"id": "right_profile_eye", "label": "Olho direito — perfil", "map": "head", "view": "right", "x": 144, "y": 126, "w": 44, "h": 28},
+    {"id": "right_profile_nose", "label": "Nariz — perfil direito", "map": "head", "view": "right", "x": 72, "y": 150, "w": 58, "h": 62},
+    {"id": "right_profile_mouth", "label": "Boca — perfil direito", "map": "head", "view": "right", "x": 75, "y": 220, "w": 60, "h": 42},
+]
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -332,7 +354,7 @@ async def config() -> dict[str, Any]:
         "questions": QUESTIONS,
         "rulesVersion": "2026.09",
         "termsVersion": "v1.0",
-        "bodyRegions": BODY_REGIONS,
+        "bodyRegions": BODY_REGIONS + HEAD_REGIONS,
     }
 
 
