@@ -1,0 +1,22 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: anamnese_visual
+      APP_ENV: production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:
+

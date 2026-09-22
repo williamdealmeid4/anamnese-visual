@@ -1,0 +1,19 @@
+{
+  "name": "Anamnese Visual",
+  "short_name": "Anamnese",
+  "description": "Anamnese visual e termo de responsabilidade.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f8fb",
+  "theme_color": "#1e3a5f",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/static/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
