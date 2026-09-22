@@ -38,7 +38,7 @@ Abra:
 
 ## MongoDB
 
-Com MongoDB disponível, configure `MONGO_URI` e `MONGO_DB`. Sem essa variável, o sistema usa uma store em memória apenas para demonstração.
+Por padrão, a aplicação tenta conectar em `mongodb://127.0.0.1:27017`. Para outro servidor, configure `MONGO_URI` e `MONGO_DB`. Se o banco estiver indisponível, o sistema usa uma store em memória apenas para demonstração.
 
 Para subir API e MongoDB juntos:
 
@@ -55,4 +55,3 @@ docker compose up --build
 - Proteção CSRF, rate limit e logs estruturados.
 - Revisão das regras pelo responsável técnico.
 - Testes automatizados de regras e fluxos móveis.
-

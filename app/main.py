@@ -192,7 +192,7 @@ class SessionStore:
     def __init__(self) -> None:
         self.memory: dict[str, dict[str, Any]] = {}
         self.mongo = None
-        uri = os.getenv("MONGO_URI", "").strip()
+        uri = os.getenv("MONGO_URI", "mongodb://127.0.0.1:27017").strip()
         if uri and MongoClient is not None:
             try:
                 client = MongoClient(uri, serverSelectionTimeoutMS=1200)
