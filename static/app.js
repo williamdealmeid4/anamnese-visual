@@ -260,6 +260,7 @@
   }
 
   const BODY_REGION_FIXTURES = [
+    { id: "head_back", label: "Cabeça", view: "back", x: 132, y: 12, w: 56, h: 48 },
     { id: "left_arm", label: "Braço esquerdo", view: "front", x: 72, y: 88, w: 40, h: 114 },
     { id: "right_arm", label: "Braço direito", view: "front", x: 208, y: 88, w: 40, h: 114 },
     { id: "left_hand", label: "Mão esquerda", view: "front", x: 84, y: 201, w: 38, h: 45 },
@@ -270,11 +271,16 @@
     { id: "right_arm_back", label: "Braço direito", view: "back", x: 208, y: 88, w: 40, h: 114 },
     { id: "left_hand_back", label: "Mão esquerda", view: "back", x: 84, y: 201, w: 38, h: 45 },
     { id: "right_hand_back", label: "Mão direita", view: "back", x: 198, y: 201, w: 38, h: 45 },
+    { id: "left_thigh_back", label: "Coxa esquerda", view: "back", x: 116, y: 314, w: 42, h: 46 },
+    { id: "right_thigh_back", label: "Coxa direita", view: "back", x: 162, y: 314, w: 42, h: 46 },
+    { id: "left_leg_back", label: "Perna esquerda", view: "back", x: 116, y: 360, w: 42, h: 150 },
+    { id: "right_leg_back", label: "Perna direita", view: "back", x: 162, y: 360, w: 42, h: 150 },
     { id: "left_foot_back", label: "Pé esquerdo", view: "back", x: 96, y: 496, w: 52, h: 34 },
     { id: "right_foot_back", label: "Pé direito", view: "back", x: 172, y: 496, w: 52, h: 34 }
   ];
 
   const HEAD_REGION_FIXTURES = [
+    { id: "forehead", label: "Testa", map: "head", view: "front", x: 76, y: 84, w: 148, h: 74 },
     { id: "left_eye", label: "Olho esquerdo", map: "head", view: "front", x: 60, y: 190, w: 62, h: 36 },
     { id: "right_eye", label: "Olho direito", map: "head", view: "front", x: 178, y: 190, w: 62, h: 36 },
     { id: "left_eyebrow", label: "Sobrancelha esquerda", map: "head", view: "front", x: 48, y: 162, w: 78, h: 24 },
@@ -288,9 +294,13 @@
     { id: "mouth_center", label: "Centro da boca", map: "head", view: "front", x: 124, y: 306, w: 52, h: 51 },
     { id: "mouth_left_corner", label: "Canto esquerdo da boca", map: "head", view: "front", x: 90, y: 315, w: 28, h: 28 },
     { id: "mouth_right_corner", label: "Canto direito da boca", map: "head", view: "front", x: 182, y: 315, w: 28, h: 28 },
+    { id: "left_profile_cheek", label: "Bochecha — perfil esquerdo", map: "head", view: "left", x: 70, y: 225, w: 135, h: 65 },
+    { id: "left_profile_ear", label: "Orelha — perfil esquerdo", map: "head", view: "left", x: 207, y: 175, w: 65, h: 115 },
     { id: "left_profile_eye", label: "Olho esquerdo — perfil", map: "head", view: "left", x: 62, y: 190, w: 50, h: 34 },
     { id: "left_profile_nose", label: "Nariz — perfil esquerdo", map: "head", view: "left", x: 8, y: 224, w: 54, h: 80 },
     { id: "left_profile_mouth", label: "Boca — perfil esquerdo", map: "head", view: "left", x: 18, y: 293, w: 72, h: 50 },
+    { id: "right_profile_cheek", label: "Bochecha — perfil direito", map: "head", view: "right", x: 95, y: 225, w: 135, h: 65 },
+    { id: "right_profile_ear", label: "Orelha — perfil direito", map: "head", view: "right", x: 28, y: 175, w: 65, h: 115 },
     { id: "right_profile_eye", label: "Olho direito — perfil", map: "head", view: "right", x: 184, y: 190, w: 50, h: 34 },
     { id: "right_profile_nose", label: "Nariz — perfil direito", map: "head", view: "right", x: 246, y: 224, w: 54, h: 80 },
     { id: "right_profile_mouth", label: "Boca — perfil direito", map: "head", view: "right", x: 230, y: 293, w: 72, h: 50 }
