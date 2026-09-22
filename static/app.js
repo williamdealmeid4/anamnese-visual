@@ -151,10 +151,18 @@
       if (isStaff) {
         state.staffSessions = await api("/api/sessions");
       } else {
-        const session = await api(`/api/sessions/${encodeURIComponent(state.sessionId)}`);
+        let session;
+        if (params.get("fresh") === "1") {
+          session = await api("/api/sessions", { method: "POST", body: JSON.stringify({ clientName: "", service: "Tatuagem" }) });
+          state.sessionId = session._id;
+          localStorage.setItem("anamnese-session", session._id);
+          window.history.replaceState({}, "", `/?session=${encodeURIComponent(session._id)}`);
+        } else {
+          session = await api(`/api/sessions/${encodeURIComponent(state.sessionId)}`);
+        }
         hydrate(session);
         const localDraft = localStorage.getItem(`anamnese-draft-${state.sessionId}`);
-        if (localDraft && !session.submittedAt) {
+        if (localDraft && !session.submittedAt && params.get("fresh") !== "1") {
           try {
             const parsed = JSON.parse(localDraft);
             state.form = { ...state.form, ...parsed.form, client: { ...state.form.client, ...(parsed.form?.client || {}) } };
@@ -337,7 +345,7 @@
   function renderSubmitted() {
     const alert = state.session?.alert;
     const reviewText = alert ? "Sua ficha foi enviada e precisa ser revisada pela equipe antes do procedimento." : "Sua ficha foi enviada para a equipe. Aguarde a confirmação do atendimento.";
-    return `<section class="success-panel"><div class="success-icon">✓</div><p class="eyebrow">Ficha enviada</p><h1>Está tudo registrado.</h1><p class="lead" style="margin:0 auto 1.2rem">${reviewText}</p><div class="notice ${alert ? "notice-warning" : "notice-success"}" style="text-align:left"><span class="notice-icon">${alert ? "!" : "✓"}</span><div><strong>${alert ? "Revisão profissional pendente" : "Nenhuma regra de alerta foi acionada"}</strong><p>Não feche esta tela até conversar com a equipe, se solicitado.</p></div></div></section>`;
+    return `<section class="success-panel"><div class="success-icon">✓</div><p class="eyebrow">Ficha enviada</p><h1>Está tudo registrado.</h1><p class="lead" style="margin:0 auto 1.2rem">${reviewText}</p><div class="notice ${alert ? "notice-warning" : "notice-success"}" style="text-align:left"><span class="notice-icon">${alert ? "!" : "✓"}</span><div><strong>${alert ? "Revisão profissional pendente" : "Nenhuma regra de alerta foi acionada"}</strong><p>Não feche esta tela até conversar com a equipe, se solicitado.</p></div></div><div class="button-group" style="justify-content:center;margin-top:1.2rem"><a class="button button-primary" href="/?fresh=1">Começar nova ficha</a><a class="button button-secondary" href="/staff">Abrir painel profissional</a></div></section>`;
   }
 
   function renderStaff() {
