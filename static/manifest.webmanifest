@@ -1,7 +1,7 @@
 {
-  "name": "Anamnese Visual",
-  "short_name": "Anamnese",
-  "description": "Anamnese visual e termo de responsabilidade.",
+  "name": "Ficha do procedimento",
+  "short_name": "Ficha Studio",
+  "description": "Ficha digital e termo de responsabilidade para procedimentos.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f6f8fb",

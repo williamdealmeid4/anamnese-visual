@@ -122,16 +122,26 @@ BODY_REGIONS: list[dict[str, Any]] = [
     {"id": "abdomen", "label": "Abdômen", "view": "front", "x": 118, "y": 158, "w": 84, "h": 72},
     {"id": "left_arm", "label": "Braço esquerdo", "view": "front", "x": 66, "y": 88, "w": 42, "h": 126},
     {"id": "right_arm", "label": "Braço direito", "view": "front", "x": 206, "y": 88, "w": 42, "h": 126},
+    {"id": "left_hand", "label": "Mão esquerda", "view": "front", "x": 68, "y": 124, "w": 34, "h": 44},
+    {"id": "right_hand", "label": "Mão direita", "view": "front", "x": 218, "y": 124, "w": 34, "h": 44},
     {"id": "left_thigh", "label": "Coxa esquerda", "view": "front", "x": 116, "y": 230, "w": 42, "h": 130},
     {"id": "right_thigh", "label": "Coxa direita", "view": "front", "x": 162, "y": 230, "w": 42, "h": 130},
     {"id": "left_leg", "label": "Perna esquerda", "view": "front", "x": 116, "y": 360, "w": 42, "h": 150},
     {"id": "right_leg", "label": "Perna direita", "view": "front", "x": 162, "y": 360, "w": 42, "h": 150},
+    {"id": "left_foot", "label": "Pé esquerdo", "view": "front", "x": 96, "y": 496, "w": 52, "h": 34},
+    {"id": "right_foot", "label": "Pé direito", "view": "front", "x": 172, "y": 496, "w": 52, "h": 34},
     {"id": "upper_back", "label": "Parte superior das costas", "view": "back", "x": 112, "y": 88, "w": 96, "h": 90},
     {"id": "lower_back", "label": "Lombar", "view": "back", "x": 118, "y": 178, "w": 84, "h": 60},
     {"id": "left_shoulder_back", "label": "Ombro esquerdo", "view": "back", "x": 66, "y": 88, "w": 48, "h": 78},
     {"id": "right_shoulder_back", "label": "Ombro direito", "view": "back", "x": 202, "y": 88, "w": 48, "h": 78},
+    {"id": "left_arm_back", "label": "Braço esquerdo", "view": "back", "x": 66, "y": 88, "w": 42, "h": 126},
+    {"id": "right_arm_back", "label": "Braço direito", "view": "back", "x": 206, "y": 88, "w": 42, "h": 126},
+    {"id": "left_hand_back", "label": "Mão esquerda", "view": "back", "x": 68, "y": 124, "w": 34, "h": 44},
+    {"id": "right_hand_back", "label": "Mão direita", "view": "back", "x": 218, "y": 124, "w": 34, "h": 44},
     {"id": "left_glute", "label": "Glúteo esquerdo", "view": "back", "x": 116, "y": 238, "w": 42, "h": 76},
     {"id": "right_glute", "label": "Glúteo direito", "view": "back", "x": 162, "y": 238, "w": 42, "h": 76},
+    {"id": "left_foot_back", "label": "Pé esquerdo", "view": "back", "x": 96, "y": 496, "w": 52, "h": 34},
+    {"id": "right_foot_back", "label": "Pé direito", "view": "back", "x": 172, "y": 496, "w": 52, "h": 34},
 ]
 
 HEAD_REGIONS: list[dict[str, Any]] = [
@@ -251,7 +261,7 @@ class SessionStore:
 
 
 store = SessionStore()
-app = FastAPI(title="Anamnese Visual", version="0.1.0")
+app = FastAPI(title="Ficha do procedimento", version="0.1.0")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 

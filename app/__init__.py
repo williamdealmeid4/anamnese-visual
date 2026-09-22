@@ -1,2 +1,1 @@
-"""Backend package for Anamnese Visual."""
-
+"""Backend package for the procedure intake system."""

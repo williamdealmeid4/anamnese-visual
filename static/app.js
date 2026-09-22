@@ -86,8 +86,7 @@
   function logoMarkup() {
     return `<div class="brand">
       <img src="/static/assets/logo.svg" alt="Logo do estúdio" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-      <span class="brand-mark" style="display:none">AV</span>
-      <span class="brand-copy"><span class="brand-name">Anamnese Visual</span><span class="brand-context">${isStaff ? "Painel profissional" : "Preenchimento seguro"}</span></span>
+      <span class="brand-mark" style="display:none" aria-hidden="true"></span>
     </div>`;
   }
 
@@ -282,6 +281,10 @@
     return `<div class="map-panel">${mapControls()}<svg class="body-svg" viewBox="0 0 320 540" role="img" aria-label="Mapa corporal ${state.bodyView === "front" ? "frontal" : "traseiro"}">
       <circle class="body-silhouette" cx="160" cy="38" r="26" />
       <path class="body-silhouette" d="M137 65 C124 72 111 80 101 91 L76 104 L88 130 L112 119 L112 225 L122 236 L116 355 L111 509 L141 509 L160 361 L179 509 L209 509 L204 355 L198 236 L208 225 L208 119 L232 130 L244 104 L219 91 C209 80 196 72 183 65Z" />
+      <path class="body-silhouette" d="M88 126 C78 126 71 132 72 142 C73 152 80 160 90 164 L99 151 L96 133Z" />
+      <path class="body-silhouette" d="M232 126 C242 126 249 132 248 142 C247 152 240 160 230 164 L221 151 L224 133Z" />
+      <path class="body-silhouette" d="M111 507 L98 516 C91 521 94 529 104 531 L145 531 L141 507Z" />
+      <path class="body-silhouette" d="M209 507 L222 516 C229 521 226 529 216 531 L175 531 L179 507Z" />
       <path class="body-silhouette-detail" d="M160 66 L160 225 M112 119 L76 104 M208 119 L244 104" />
       ${regions.map(regionMarkup).join("")}
     </svg></div>`;

@@ -1,6 +1,6 @@
-# Anamnese Visual
+# Ficha do procedimento
 
-PWA mobile-first para anamnese visual, termo de responsabilidade e revisão profissional em estúdios de tatuagem, piercing e estética.
+PWA mobile-first para ficha digital, termo de responsabilidade e revisão profissional em estúdios de tatuagem, piercing e estética.
 
 ## O que já está incluído
 
